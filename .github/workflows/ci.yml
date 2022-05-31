@@ -1,0 +1,35 @@
+name: ci
+ 
+on:
+ push:
+   branches:
+   - main
+ pull_request:
+ 
+ 
+env:
+ DBT_PROFILES_DIR: ./
+ DBT_USER: ${{ secrets.DBT_USER }}
+ DBT_PASSWORD: ${{ secrets.DBT_PASSWORD }}
+ DBT_ACCOUNT: ${{ secrets.DBT_ACCOUNT }}
+ 
+ 
+jobs:
+ 
+ dbt:
+   name: dbt
+   runs-on: ubuntu-latest
+ 
+   steps:
+     - uses: actions/checkout@master
+     - uses: actions/setup-python@v1
+       with:
+         python-version: "3.9.12"
+     - run: pip3 install dbt-core dbt-snowflake
+     - run: dbt --version
+       shell: bash
+       env:
+         DBT_USER: ${{ secrets.DBT_USER }}
+         DBT_PASSWORD: ${{ secrets.DBT_PASSWORD }}
+         DBT_ACCOUNT: ${{ secrets.DBT_ACCOUNT }}
+     - run: dbt run
